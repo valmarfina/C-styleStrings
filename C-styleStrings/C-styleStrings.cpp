@@ -36,48 +36,76 @@ bool isSameСhar(char* cStyle_array, const int size)//одинаковые си�
 	return false;
 }
 
+bool isSameСhar(std::string &str)//одинаковые символы есть?
+{
+	for (int i = 0; i < str.size(); i++)
+	{
+		for (int j = i + 1; j < str.size(); j++)
+		{
+			if (str[i] == str[j])
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 int main()
 {
 	setlocale(LC_ALL, "");
 
 	//C-style
-	int size_of_cStyle = 1;
-
-	std::ifstream stringsfile("strings.txt");
-
-	if (!stringsfile)
+	int size_of_cStyle;
+	try
 	{
-		throw std::exception("Файл не открыт!");
-		return 1;
-	}
-	if (isEmpty(stringsfile))// файл пуст
-	{
-		throw std::exception("Файл пуст!");
-		return 1;
-	}
-	while (!stringsfile.eof())// пробегаем пока не встретим конец файла eof
-	{
-		stringsfile >> size_of_cStyle;
+		std::ifstream stringsfile("strings.txt");
 
-		if (size_of_cStyle <= 0)
+		if (!stringsfile)
 		{
-			throw std::exception("Память не может быть выделена!");
+			throw std::exception("Файл не открыт!");
 			return 1;
 		}
-
-		char* cStyle_array = new char[size_of_cStyle + 1];
-
-		for (int i = 0; i < size_of_cStyle; i++)
+		if (isEmpty(stringsfile))// файл пуст
 		{
-			stringsfile >> cStyle_array[i];
+			throw std::exception("Файл пуст!");
+			return 1;
 		}
-		std::cout << "Вывод массива: - ";
-		outArray(cStyle_array, size_of_cStyle);
-		std::cout << "Есть одинаковые элементы? " << isSameСhar(cStyle_array, size_of_cStyle) << std::endl;
+		stringsfile >> size_of_cStyle;
+		while (!stringsfile.eof())// пробегаем пока не встретим конец файла eof
+		{
 
-		delete[] cStyle_array;
+			if (size_of_cStyle <= 0)
+			{
+				throw std::exception("Память не может быть выделена!");
+				return 1;
+			}
+
+			char* cStyle_array = new char[size_of_cStyle + 1];
+
+			for (int i = 0; i < size_of_cStyle; i++)
+			{
+				stringsfile >> cStyle_array[i];
+			}
+			std::cout << "Вывод массива: - ";
+			outArray(cStyle_array, size_of_cStyle);
+			std::cout << "Есть одинаковые элементы? " << isSameСhar(cStyle_array, size_of_cStyle) << std::endl;
+
+			std::string str = std::string(cStyle_array, size_of_cStyle);
+			std::cout << "Вывод строки: - " << str << std::endl;
+			std::cout << "Есть одинаковые элементы в строке? " << isSameСhar(str) << std::endl;
+
+			delete[] cStyle_array;
+
+			stringsfile >> size_of_cStyle;
+		}
+		stringsfile.close();
 	}
-	stringsfile.close();
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		return 1;
+	}
 
 	return 0;
 }
