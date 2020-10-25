@@ -21,34 +21,71 @@ void outArray(char* array, const int size)
 	std::cout << std::flush << std::endl;
 }
 
-bool isSameСhar(char* cStyle_array, const int size)//одинаковые символы есть?
+
+
+bool isSameСhar(char* cStyle_array, char* cStyle_array2, const int size, const int size2)//одинаковые символы есть?
 {
-	for (int i = 0; i < size; i++)
+	if (size2 >= size)
 	{
-		for (int j = i + 1; j < size; j++)
+		for (int i = 0; i < size; i++)
 		{
-			if (cStyle_array[i] == cStyle_array[j])
+			for (int j = i; j < size2; j++)
 			{
-				return true;
+				if (cStyle_array[i] == cStyle_array2[j])
+				{
+					return true;
+				}
 			}
 		}
+		return false;
 	}
-	return false;
+	else if (size > size2)
+	{
+		for (int i = 0; i < size2; i++)
+		{
+			for (int j = i; j < size; j++)
+			{
+				if (cStyle_array[j] == cStyle_array2[i])
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
 
-bool isSameСhar(std::string &str)//одинаковые символы есть?
+
+bool isSameСhar(std::string& str, std::string& str2)//одинаковые символы есть?
 {
-	for (int i = 0; i < str.size(); i++)
+	if (str2.size() >= str.size())
 	{
-		for (int j = i + 1; j < str.size(); j++)
+		for (int i = 0; i < str.size(); i++)
 		{
-			if (str[i] == str[j])
+			for (int j = i; j < str2.size(); j++)
 			{
-				return true;
+				if (str[i] == str2[j])
+				{
+					return true;
+				}
 			}
 		}
+		return false;
 	}
-	return false;
+	else if (str.size() > str2.size())
+	{
+		for (int i = 0; i < str2.size(); i++)
+		{
+			for (int j = i; j < str.size(); j++)
+			{
+				if (str[j] == str2[i])
+				{
+					return true;
+				}
+			}
+		}
+		return false;
+	}
 }
 
 int main()
@@ -57,6 +94,8 @@ int main()
 
 	//C-style
 	int size_of_cStyle;
+	int size_of_cStyle2;
+
 	try
 	{
 		std::ifstream stringsfile("strings.txt");
@@ -71,33 +110,61 @@ int main()
 			throw std::exception("Файл пуст!");
 			return 1;
 		}
+
 		stringsfile >> size_of_cStyle;
+		if (size_of_cStyle <= 0)
+		{
+			throw std::exception("Память не может быть выделена!");
+			return 1;
+		}
 		while (!stringsfile.eof())// пробегаем пока не встретим конец файла eof
 		{
-
-			if (size_of_cStyle <= 0)
-			{
-				throw std::exception("Память не может быть выделена!");
-				return 1;
-			}
-
+			//--------------------1-----------------------------------------------
+			
 			char* cStyle_array = new char[size_of_cStyle + 1];
 
 			for (int i = 0; i < size_of_cStyle; i++)
 			{
 				stringsfile >> cStyle_array[i];
 			}
-			std::cout << "Вывод массива: - ";
+			//--------------------2-----------------------------------------------
+			stringsfile >> size_of_cStyle2;
+			if (size_of_cStyle2 <= 0)
+			{
+				throw std::exception("Память не может быть выделена!");
+				return 1;
+			}
+			char* cStyle_array2 = new char[size_of_cStyle2 + 1];
+
+			for (int i = 0; i < size_of_cStyle2; i++)
+			{
+				stringsfile >> cStyle_array2[i];
+			}
+			//---------------------------------------------------
+
+			std::cout << "МАССИВ 1: ";
 			outArray(cStyle_array, size_of_cStyle);
-			std::cout << "Есть одинаковые элементы? " << isSameСhar(cStyle_array, size_of_cStyle) << std::endl;
+			std::cout << "МАССИВ 2: ";
+			outArray(cStyle_array2, size_of_cStyle2);
+			std::cout << "Есть одинаковые элементы? " << isSameСhar(cStyle_array, cStyle_array2, size_of_cStyle, size_of_cStyle2) << std::endl;
 
 			std::string str = std::string(cStyle_array, size_of_cStyle);
-			std::cout << "Вывод строки: - " << str << std::endl;
-			std::cout << "Есть одинаковые элементы в строке? " << isSameСhar(str) << std::endl;
+			std::string str2 = std::string(cStyle_array2, size_of_cStyle2);
+
+			std::cout << "СТРОКА 1: " << str << std::endl;
+			std::cout << "СТРОКА 2: " << str2 << std::endl;
+			std::cout << "Есть одинаковые элементы в строке? " << isSameСhar(str, str2) << std::endl;
+
 
 			delete[] cStyle_array;
+			delete[] cStyle_array2;
 
 			stringsfile >> size_of_cStyle;
+			if (size_of_cStyle <= 0)
+			{
+				throw std::exception("Память не может быть выделена!");
+				return 1;
+			}
 		}
 		stringsfile.close();
 	}
